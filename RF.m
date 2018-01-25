@@ -1,3 +1,26 @@
+% MIT License
+%
+% Copyright (c) 2018 Laboratoire SATIE
+% Copyright (c) 2018 Université de Cergy Pontoise
+% Copyright (c) 2018 Bastien Roucariès
+%
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+%
+% The above copyright notice and this permission notice shall be included in all
+% copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+% SOFTWARE.
 function f=RF(x, y, z, errtol=1e-3)
     assert(min([min(size(x)==size(y)),min(size(x)==size(z))]), ...
        'x y z size should be equal');
@@ -30,19 +53,19 @@ function [s f]=RFspecial(x,y,z)
         f=NaN;
         return
     end
-    
+
     % 0
     if(x==0 && y ==0 && z==0)
         f=NaN;
         return
     end
-    
+
     % equal
     if(x==y && x==z)
         f=1.0/sqrt(x);
         return;
     end
-    
+
     % RC
     if(x==y)
         f=RC(z,y);
@@ -56,7 +79,7 @@ function [s f]=RFspecial(x,y,z)
         f=RC(x,y);
         return
     end
-    
+
     % infinity
     if(isinf(abs(x)) || isinf(abs(y)) || isinf(abs(z)))
         f=0;
@@ -71,17 +94,17 @@ function f=RFscalar(x,y,z,errtol)
    if(s)
        return
    end
-   
+
    % Argument limits as set by Carlson (use power of two instead
    % of 5.0)
    factorloss = 16.0; % aka 4 bits
-   nearestsquareloss = 16.0; 
+   nearestsquareloss = 16.0;
    sqrtnearestsquareloss = 4.0;
    LoLim = factorloss * realmin;
    LoLimS = nearestsquareloss * 2 * realmin;
    UpLim = realmax/factorloss;
    UpLimS = realmax/(2*nearestsquareloss);
-   
+
    % prefer to decrease in order to use subnormal
    if(abs(z) > UpLim)
        % use DLMF 19.20.1
@@ -94,7 +117,7 @@ function f=RFscalar(x,y,z,errtol)
        f=RFgen(x,y,z,errtol)/sqrtnearestsquareloss;
        return;
    end
-   
+
    if(abs(x) < LoLim)
        [x y z]=num2cell([x y z].*nearestsquareloss){:};
        [s f]=RFspecial(x,y,z);
@@ -105,13 +128,13 @@ function f=RFscalar(x,y,z,errtol)
        % use DLMF 19.20.1
        f=sqrtnearestsquareloss*RFgen(x,y,z,errtol);
        return;
-   end 
+   end
    f=RFgen(x,y,z,errtol);
 end
 
 
 
-    
+
 function f=RFgen(x,y,z,errtol)
     sqrtx = 0;
     sqrty = 0;
@@ -124,7 +147,7 @@ function f=RFgen(x,y,z,errtol)
     epslon = 0;
     e2 = 0;
     e3 = 0;
- 
+
     % constant
     C1 = 1.0/24.0;
     C2 = 0.1;

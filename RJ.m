@@ -1,3 +1,26 @@
+% MIT License
+%
+% Copyright (c) 2018 Laboratoire SATIE
+% Copyright (c) 2018 Université de Cergy Pontoise
+% Copyright (c) 2018 Bastien Roucariès
+%
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+%
+% The above copyright notice and this permission notice shall be included in all
+% copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+% SOFTWARE.
 function f=RJ(x, y, z, p, errtol=1e-4)
     assert(min([min(size(x)==size(y)),min(size(x)==size(z)),min(size(x)==size(p))]), ...
        'x y z size should be equal');
@@ -30,18 +53,18 @@ function [s f]=RJspecial(x,y,z,p)
         f=NaN;
         return
     end
-    
+
     % 0
     if(x==0 && y ==0)
         f=inf;
         return
     end
-    
+
     % infinity
     if(isinf(abs(x)) || isinf(abs(y)) || isinf(abs(z)) || isinf(abs(p)))
         f=0;
     end
-    
+
     % equal
     if(x==y && x==z && z==p)
         if(x*sqrt(x)==0)
@@ -51,7 +74,7 @@ function [s f]=RJspecial(x,y,z,p)
         end
         return;
     end
-    
+
     %RD
     if(z==p)
         f=RD(x,y,z);
@@ -72,7 +95,7 @@ function f=RJscalelow(x,y,z,p,errtol,nsl,sqrtnsl)
         return;
     end
     f=RJgen(x,y,z,p,errtol)/sqrtnsl;
-    return;    
+    return;
 end
 
 function f=RJscaleup(x,y,z,p,errtol,nsl,sqrtnsl)
@@ -86,27 +109,27 @@ function f=RJscaleup(x,y,z,p,errtol,nsl,sqrtnsl)
         return;
     end
     f=RJgen(x,y,z,p,errtol)*sqrtnsl;
-    return;    
+    return;
 end
 
- 
+
 
 function f=RJscalar(x,y,z,p,errtol)
    [s f]=RJspecial(x,y,z,p);
    if(s)
        return
    end
-   
+
    % Argument limits as set by Carlson (use power of two instead
    % of 5.0)
    factorloss = 16.0; % aka 4 bits
-   nearestsquareloss = 16.0; 
+   nearestsquareloss = 16.0;
    sqrtnearestsquareloss = 4.0*16;
    LoLim = factorloss * realmin;
    LoLimS = nearestsquareloss * 2 * realmin;
    UpLim = realmax/factorloss;
    UpLimS = realmax/(2*nearestsquareloss);
-   
+
    % some special case (huge/small)
     % for Rc y dominate against x
     if(abs(p)>UpLim && abs(x)<LoLimS && abs(y)<LoLimS && abs(p)<LoLimS)
@@ -114,20 +137,20 @@ function f=RJscalar(x,y,z,p,errtol)
                      sqrtnearestsquareloss);
         return
     end
-    
+
     if(abs(p)<LoLim && abs(x)>UpLimS && abs(y)>UpLimS && abs(p)>UpLimS)
         f=RJscaleup(x,y,z,p,errtol,nearestsquareloss, ...
                      sqrtnearestsquareloss);
         return;
     end
-            
+
     % huge
     if(abs(p)>UpLim)
         f=RJscalelow(x,y,z,p,errtol,nearestsquareloss, ...
                      sqrtnearestsquareloss);
         return
     end
-    
+
     if(abs(x)>UpLim || abs(y) > UpLim || abs(z) > UpLim)
         f=RJscalelow(x,y,z,p,errtol,nearestsquareloss, ...
                      sqrtnearestsquareloss);
@@ -145,13 +168,13 @@ function f=RJscalar(x,y,z,p,errtol)
                      sqrtnearestsquareloss);
         return;
     end
-   
+
    f=RJgen(x,y,z,p,errtol);
 end
 
 
 
-    
+
 function f=RJgen(x,y,z,p,errtol)
     C1=(3.0/14.0);
     C2=(1.0/3.0);
@@ -208,7 +231,7 @@ function f=RJgen(x,y,z,p,errtol)
     ee=eb+2.0*delp*(ea-ec);
     ans=3.0*sum+fac*(1.0+ed*(-C1+C5*ed-C6*ee)+eb*(C7+delp*(-C8+delp*C4))+...
                      delp*ea*(C2-delp*C3)-C2*delp*ec)/(ave*sqrt(ave));
-    if (p <= 0.0) 
+    if (p <= 0.0)
         ans=a*(b*ans+3.0*(rcx-RF(xt,yt,zt)));
     end
     f=ans;

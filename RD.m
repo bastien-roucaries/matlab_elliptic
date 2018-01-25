@@ -1,3 +1,26 @@
+% MIT License
+%
+% Copyright (c) 2018 Laboratoire SATIE
+% Copyright (c) 2018 Université de Cergy Pontoise
+% Copyright (c) 2018 Bastien Roucariès
+%
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+%
+% The above copyright notice and this permission notice shall be included in all
+% copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+% SOFTWARE.
 function f=RD(x, y, z, errtol=1e-4)
     assert(min([min(size(x)==size(y)),min(size(x)==size(z))]), ...
        'x y z size should be equal');
@@ -29,7 +52,7 @@ function [s f]=RDspecial(x,y,z)
         f=NaN;
         return
     end
-    
+
     % 0
     if(x==0 && y ==0)
         if(z==0)
@@ -39,7 +62,7 @@ function [s f]=RDspecial(x,y,z)
         end
         return
     end
-    
+
     if(x==0 && y==z)
         if(z*sqrt(z)==0)
             f=inf;
@@ -49,18 +72,18 @@ function [s f]=RDspecial(x,y,z)
         end
         return;
     end
-    
+
     % infinity
     if(isinf(abs(x)) || isinf(abs(y)) || isinf(abs(z)))
         f=0;
     end
-    
+
     % equal
     if(x==y && x==z)
         f=1.0/(x*sqrt(x));
         return;
     end
-    
+
     s=0;
     f=0;
  end
@@ -76,7 +99,7 @@ function f=RDscalelow(x,y,z,errtol,nsl,sqrtnsl)
         return;
     end
     f=RDgen(x,y,z,errtol)/sqrtnsl;
-    return;    
+    return;
 end
 
 function f=RDscaleup(x,y,z,errtol,nsl,sqrtnsl)
@@ -90,27 +113,27 @@ function f=RDscaleup(x,y,z,errtol,nsl,sqrtnsl)
         return;
     end
     f=RDgen(x,y,z,errtol)*sqrtnsl;
-    return;    
+    return;
 end
 
- 
+
 
 function f=RDscalar(x,y,z,errtol)
    [s f]=RDspecial(x,y,z);
    if(s)
        return
    end
-   
+
    % Argument limits as set by Carlson (use power of two instead
    % of 5.0)
    factorloss = 16.0; % aka 4 bits
-   nearestsquareloss = 16.0; 
+   nearestsquareloss = 16.0;
    sqrtnearestsquareloss = 4.0*16;
    LoLim = factorloss * realmin;
    LoLimS = nearestsquareloss * 2 * realmin;
    UpLim = realmax/factorloss;
    UpLimS = realmax/(2*nearestsquareloss);
-   
+
    % some special case (huge/small)
     % for Rc y dominate against x
     if(abs(z)>UpLim && abs(x)<LoLimS && abs(y)<LoLimS)
@@ -118,20 +141,20 @@ function f=RDscalar(x,y,z,errtol)
                      sqrtnearestsquareloss);
         return
     end
-    
+
     if(abs(z)<LoLim && abs(x)>UpLimS && abs(y)>UpLimS)
         f=RDscaleup(x,y,z,errtol,nearestsquareloss, ...
                      sqrtnearestsquareloss);
         return;
     end
-            
+
     % huge
     if(abs(z)>UpLim)
         f=RDscalelow(x,y,z,errtol,nearestsquareloss, ...
                      sqrtnearestsquareloss);
         return
     end
-    
+
     if(abs(x)>UpLim || abs(y) > UpLim)
         f=RDscalelow(x,y,z,errtol,nearestsquareloss, ...
                      sqrtnearestsquareloss);
@@ -149,13 +172,13 @@ function f=RDscalar(x,y,z,errtol)
                      sqrtnearestsquareloss);
         return;
     end
-   
+
    f=RDgen(x,y,z,errtol);
 end
 
 
 
-    
+
 function f=RDgen(x,y,z,errtol)
     C1=(3.0/14.0);
     C2=(1.0/6.0);
@@ -163,7 +186,7 @@ function f=RDgen(x,y,z,errtol)
     C4=(3.0/26.0);
     C5=(0.25*C3);
     C6=(1.5*C4);
-    
+
     alamb=0;
     ave=0;
     delx=dely=delz=0;
