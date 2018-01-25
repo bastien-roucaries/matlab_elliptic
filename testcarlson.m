@@ -70,6 +70,16 @@ function testcarlson
     % D(k)
     tol(EDP(pi/3,0.5),(EF(pi/3,0.5)-EEP(pi/3,0.5))/0.5^2)
     tol(ED(0.5),(EK(0.5)-EE(0.5))/0.5^2)
+    % from mathematica
+    % from mathematica
+    tol(EPi(0.4,sqrt(0.6)), ...
+        2.590921156555220293067792172295651236897020458546480266071)
+     tol(EPiP(pi/2,0.4,sqrt(0.6)), ...
+        2.590921156555220293067792172295651236897020458546480266071)
+    % EllipticPi[0.4,pi/3,0.6] !!! see mathematica convention
+    tol(EPiP(pi/3,0.4,sqrt(0.6)), ...
+             1.353572359896644385640544495988724325661999937255699041262)
+    
 end
 
 function tol(x,c,t=eps*1000)
